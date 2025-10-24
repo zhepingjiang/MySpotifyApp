@@ -9,12 +9,19 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.laioffer.spotify.player.PlayerViewModel
+import com.laioffer.spotify.repository.FavoriteAlbumRepository
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PlaylistFragment : Fragment() {
     private val navArgs by navArgs<PlaylistFragmentArgs>()
+    private val viewModel: PlaylistViewModel by viewModels()
+    private val playerViewModel: PlayerViewModel by activityViewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,6 +31,10 @@ class PlaylistFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 MaterialTheme(colors = darkColors()) {
+                    PlaylistScreen(
+                        playlistViewModel = viewModel,
+                        playerViewModel = playerViewModel
+                    )
                 }
             }
         }
@@ -32,5 +43,6 @@ class PlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d("PlaylistFragment", navArgs.album.toString())
+        viewModel.fetchPlaylist(navArgs.album)
     }
 }
